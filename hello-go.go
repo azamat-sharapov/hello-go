@@ -104,6 +104,6 @@ func main() {
 	http.HandleFunc("/", webServerHandler)
 	http.HandleFunc("/save-my-name", saveName)
 
-	fmt.Println("Server about to run on: http://localhost:8182")
+	fmt.Println("Check server on: http://localhost:8182")
 	http.ListenAndServe(":8182", nil)
 }
