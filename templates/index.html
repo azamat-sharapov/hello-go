@@ -18,6 +18,17 @@
 				$('#message').text(r.message)
 				$('#step1').hide()
 				$('#step2').show()
+
+				var i = 3
+				setInterval(function () {
+					if (i < 1) {
+						window.location.reload()
+					}
+					else {
+						$('#note').text('Page will reload in ' + i + ' seconds')
+					}
+					i--
+				}, 1000)
 			})
 		})
 	</script>
@@ -31,6 +42,7 @@
 
 	<div style='display:none' id='step2'>
 		<h2 id='message'></h2>
+		<em style='color:#ccc'><small id='note'></small></em>
 	</div>
 </body>
 </html>
