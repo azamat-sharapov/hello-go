@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
@@ -45,8 +46,16 @@ func connectDb() error {
 		name TEXT UNIQUE
 	)
 	`
+	pguser := flag.String("pguser", "", "Enter postgres user login")
+	pgpass := flag.String("pgpass", "", "Enter postgres user password")
 
-	db, err = sqlx.Connect("postgres", "user=dev dbname=hello-go sslmode=disable")
+	flag.Parse()
+
+	if *pguser == "" || *pgpass == "" {
+		return fmt.Errorf("Usage: \n  hello-go -pguser [postgres user] -pgpass [postgres user password]")
+	}
+
+	db, err = sqlx.Connect("postgres", fmt.Sprintf("user=%v password=%v dbname=hello-go sslmode=disable", *pguser, *pgpass))
 
 	if err == nil {
 		db.MustExec(schema)
@@ -94,5 +103,7 @@ func main() {
 
 	http.HandleFunc("/", webServerHandler)
 	http.HandleFunc("/save-my-name", saveName)
+
+	fmt.Println("Server about to run on: http://localhost:8182")
 	http.ListenAndServe(":8182", nil)
 }
