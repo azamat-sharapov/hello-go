@@ -42,7 +42,7 @@ func connectDb() error {
 	var err error
 	var schema = `
 	CREATE TABLE IF NOT EXISTS people (
-		name TEXT
+		name TEXT UNIQUE
 	)
 	`
 
@@ -57,14 +57,26 @@ func connectDb() error {
 
 func saveName(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
-	_, err := db.NamedExec("INSERT INTO people (name) VALUES (:name)", Person{r.PostForm.Get("name")})
+	person := Person{r.PostForm.Get("name")}
+	var message string
+	var err error
+	var rows *sqlx.Rows
+
+	rows, err = db.NamedQuery("SELECT * from people where name = :name", person)
+
+	if rows.Next() {
+		message = fmt.Sprintf("Welcome back %s!", person.Name)
+	} else {
+		_, err = db.NamedExec("INSERT INTO people (name) VALUES (:name)", person)
+		message = fmt.Sprintf("Hello %s! Now you are registered in our database.", person.Name)
+	}
 
 	if err != nil {
 		showError(w, err)
 		return
 	}
 
-	fmt.Fprintf(w, "ok")
+	fmt.Fprintf(w, "{\"message\": \"%s\"}", message)
 }
 
 func showError(w http.ResponseWriter, err error) {
