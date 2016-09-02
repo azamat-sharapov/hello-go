@@ -1,6 +1,36 @@
 <!DOCTYPE html>
 <html>
-<body>
-	<h1>Hello {{ .Who }}!</h1>
+<head>
+	<link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
+	<script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s=" crossorigin="anonymous"></script>
+	<script>
+		$(document).on('submit', '#step1', function(e) {
+			e.preventDefault()
+
+			var name = $('#name').val()
+
+			if (!name) {
+				return alert('Please enter your name!')
+			}
+
+			$.post('save-my-name', {name: name}, function (r) {
+				var r = JSON.parse(r)
+				$('#message').text(r.message)
+				$('#step1').hide()
+				$('#step2').show()
+			})
+		})
+	</script>
+</head>
+
+<body style='padding:1em'>
+	<form class='pure-form' id='step1' method='post'>
+		<input id='name' type='text' placeholder='Please enter your name' class='pure-input-1-3'>
+		<button class='pure-button pure-button-primary'>Submit</button>
+	</form>
+
+	<div style='display:none' id='step2'>
+		<h2 id='message'></h2>
+	</div>
 </body>
 </html>
