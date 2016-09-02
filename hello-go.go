@@ -14,7 +14,13 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = t.Execute(w, nil)
+	data := struct {
+		Who string
+	}{
+		Who: "World",
+	}
+
+	err = t.Execute(w, data)
 
 	if err != nil {
 		showError(w, err)
